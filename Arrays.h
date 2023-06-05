@@ -20,7 +20,11 @@ struct ConservativeArrays{
     float E[NyNx];
 };
 
-extern void Init2DArrayAtZero(int Ny, int Nx, float A[]);
+struct Gradient{
+    float A_DX[NyNx];
+    float A_DY[NyNx];
+};
+
 extern void SetRandomInitialConditions(int Ny, int Nx, float P0, float D1, float D2, float V1, float V2, ScalarArrays *Scalars);
 
 #endif

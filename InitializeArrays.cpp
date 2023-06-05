@@ -1,18 +1,8 @@
 #include "Parameters.h"
 #include "Arrays.h"
+#include "Index.h"
 #include <math.h>
 #include <random>
-
-void Init2DArrayAtZero(int Ny, int Nx, float A[]){
-    int i,j, index;
-
-    for (i = 0; i < Ny; i++){
-        for (j = 0; j < Nx; j++){
-            index = i*Nx + j;
-            A[index] = 0.0;
-            }
-        }
-}
 
 void SetRandomInitialConditions(int Ny, int Nx, float P0, float D1, float D2, float V1, float V2, ScalarArrays *Scalars){
     int i,j,index;  
@@ -26,7 +16,7 @@ void SetRandomInitialConditions(int Ny, int Nx, float P0, float D1, float D2, fl
 
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){
-            index = i*Nx + j;
+            index = GetIndex(j, i, Nx);
             V1rand = UniDis(gen);
             V2rand = UniDis(gen);
 
