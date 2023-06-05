@@ -1,5 +1,5 @@
-#ifndef SCALARSCONSEQS_H
-#define SCALARSCONSEQS_H
+#ifndef SCALARS_CONS_EQS_H
+#define SCALARS_CONS_EQS_H
 #include "Arrays.h"
 
 extern void ObtainConservativeValues(ConservativeArrays *Conservatives, ScalarArrays *Scalars);

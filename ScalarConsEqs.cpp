@@ -1,5 +1,6 @@
 #include "Arrays.h"
 #include "Parameters.h"
+#include "Index.h"
 #include <math.h>
 
 void ObtainConservativeValues(ConservativeArrays *Conservatives, ScalarArrays *Scalars){
@@ -8,7 +9,7 @@ void ObtainConservativeValues(ConservativeArrays *Conservatives, ScalarArrays *S
 
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){
-            index = i*Nx + j;
+            index = GetIndex(j, i, Nx);
 
             mass = Scalars->Dens[index]/Volume;
             Conservatives->Mass[index] = mass;
@@ -29,7 +30,7 @@ void ObtainScalarValues(ScalarArrays *Scalars, ConservativeArrays *Conservatives
 
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){
-            index = i*Nx + j;
+            index = GetIndex(j, i, Nx);
 
             mass = Conservatives->Mass[index];
             Scalars->Dens[index] = mass/Volume;
