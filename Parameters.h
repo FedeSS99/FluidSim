@@ -4,6 +4,8 @@
     Ny, Nx : Number of cells for each dimension
     Ly, Lx : Spatial dimensions for each dimension
 
+    FinalT : Max value of time to end simulation
+
     P0: Initial pressure of the whole system
     D_i, V_i: Density and horizontal velocities for each
     region (i=1,2)
@@ -19,6 +21,8 @@
     const float dy = Ly/Ny;
     const float dx = Lx/Nx;
     const float Volume = dx*dy;
+
+    const float FinalT = 5.0;
 
     const float P0 = 2.5;
     const float D1 = 1.0;
