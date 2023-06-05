@@ -2,18 +2,14 @@
 #include <stdio.h>
 #include "Parameters.h"
 #include "Arrays.h"
-#include "ScalarsCons.h" 
+#include "ScalarsCons.h"
+#include "TimeStep.h"
 
 int main(){
+    float t = 0;
     int i,j;
     ScalarArrays Scalars;
     ConservativeArrays Conservatives;
-
-    /* Fill scalar arrays with zeros */
-    Init2DArrayAtZero(Ny, Nx, Scalars.Vx);
-    Init2DArrayAtZero(Ny, Nx, Scalars.Vy);
-    Init2DArrayAtZero(Ny, Nx, Scalars.Dens);
-    Init2DArrayAtZero(Ny, Nx, Scalars.Pres);
 
     /*
     Setting initial random conditions as seen in:
@@ -21,8 +17,13 @@ int main(){
     */
     SetRandomInitialConditions(Ny, Nx, P0, D1, D2, V1, V2, &Scalars);
 
-    /* Fill conservative arrays with their correspondt values */
-    ObtainConservativeValues(&Conservatives, &Scalars);
+    while (t < FinalT){
+        /* Fill conservative arrays with their values dependent of Scalar arrays */
+        ObtainConservativeValues(&Conservatives, &Scalars);
+
+        /* Find optimal timestep to mantain stability in the simulation */
+        GetOptimalTimeStep(&Scalars, MinDiff);
+    }
 
     return 0;
 }
