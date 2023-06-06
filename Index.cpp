@@ -4,7 +4,7 @@ int GetIndex(int x, int y, int Nx){
     return  y*Nx + x;
 }
 
-int GetPeriodicIndex(int *index, int N){
+void GetPeriodicIndex(int *index, int N){
     if ((*index) == N){
         (*index) = 0;
     }
