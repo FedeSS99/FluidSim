@@ -32,4 +32,6 @@ Gradient ObtainGradient(float A[]){
             DA.A_DY[index_c] = (A[index_U] - A[index_B])*InvDy;
         }
     }
+
+    return DA;
 }
