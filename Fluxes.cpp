@@ -36,3 +36,32 @@ void ComputeFluxes(FluxesArrays *Fluxes, MidSpaceStepArrays *MidDens, MidSpaceSt
         }
     }
 }
+
+void AddFluxesToConservatives(float dt, ConservativeArrays *Cons, FluxesArrays *Fluxes){
+    int i,j,index;
+    int i_lower, j_lower, transX_index, transY_index;
+    float dtdx = dt*dx;
+    float dtdy = dt*dy;
+
+    for (i=0; i<Ny; i++){
+        for (j=0; j<Nx; j++){
+            index = GetIndex(j, i, Nx);
+            i_lower = i - 1;
+            j_lower = j - 1;
+            GetPeriodicIndex(&i_lower, Ny);
+            GetPeriodicIndex(&j_lower, Nx);
+            transX_index = GetIndex(j_lower, i, Nx);
+            transY_index = GetIndex(j, i_lower, Nx);
+
+            Cons->Mass[index] += (dtdx*Fluxes->F_DensX[transX_index] + dtdy*Fluxes->F_DensY[transY_index]); 
+            Cons->Mx[index] += (dtdx*Fluxes->F_MomxX[transX_index] + dtdy*Fluxes->F_MomxY[transY_index]); 
+            Cons->My[index] += (dtdx*Fluxes->F_MomyX[transX_index] + dtdy*Fluxes->F_MomyY[transY_index]); 
+            Cons->E[index] += (dtdx*Fluxes->F_EneX[transX_index] + dtdy*Fluxes->F_EneY[transY_index]); 
+
+            Cons->Mass[index] -= (dtdx*Fluxes->F_DensX[index] + dtdy*Fluxes->F_DensY[index]); 
+            Cons->Mx[index] -= (dtdx*Fluxes->F_MomxX[index] + dtdy*Fluxes->F_MomxY[index]); 
+            Cons->My[index] -= (dtdx*Fluxes->F_MomyX[index] + dtdy*Fluxes->F_MomyY[index]); 
+            Cons->E[index] -= (dtdx*Fluxes->F_EneX[index] + dtdy*Fluxes->F_EneY[index]); 
+        }
+    }
+}
