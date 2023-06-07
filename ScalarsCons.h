@@ -3,6 +3,6 @@
 #include "Arrays.h"
 
 extern void ObtainConservativeValues(ConservativeArrays *Conservatives, ScalarArrays *Scalars);
-extern void ObtainScalarsValues(ScalarArrays *Scalars, ConservativeArrays *Conservatives);
+extern void ObtainScalarValues(ScalarArrays *Scalars, ConservativeArrays *Conservatives);
 
 #endif
