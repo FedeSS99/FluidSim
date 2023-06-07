@@ -2,6 +2,6 @@
 #define TIMESTEP_H
 #include "Arrays.h"
 
-extern void GetOptimalTimeStep(float *dt, ScalarArrays *Scalars, float Diff);
+extern void GetOptimalTimeStep(float *dt, ScalarArrays *Scalars);
 
 #endif

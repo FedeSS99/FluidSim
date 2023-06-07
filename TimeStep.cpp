@@ -3,25 +3,30 @@
 #include "Index.h"
 #include <math.h>
 
-float TimeStepEq(ScalarArrays *Scalars, float Diff, int index){
+float TimeStepEq(ScalarArrays *Scalars, int index){
     float Pres_ind = Scalars->Pres[index];
     float Dens_ind = Scalars->Dens[index];
-    float Vx2_ind = powf(Scalars->Vx[index], 2.0);
-    float Vy2_ind = powf(Scalars->Vy[index], 2.0);
+    float Vx_ind = Scalars->Vx[index];
+    float Vy_ind = Scalars->Vy[index];
 
-    return 0.5*(Diff/( sqrtf(gas_c*Pres_ind/Dens_ind) + sqrtf(Vx2_ind + Vy2_ind)));
+    float dt_x = 0.5*(dx/( sqrtf(gas_c*Pres_ind/Dens_ind) + fabs(Vx_ind)));
+    float dt_y = 0.5*(dy/( sqrtf(gas_c*Pres_ind/Dens_ind) + fabs(Vx_ind)));
+
+    float minDT = (dt_x < dt_y) ? dt_x : dt_y;
+
+    return minDT;
 }
 
-void GetOptimalTimeStep(float *dt, ScalarArrays *Scalars, float Diff){
+void GetOptimalTimeStep(float *dt, ScalarArrays *Scalars){
     int i,j, index;
-    float dt_ref = TimeStepEq(Scalars, Diff, 0);
+    float dt_ref = TimeStepEq(Scalars, 0);
     float dt_index;
     
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){
             index = GetIndex(j, i, Nx);
 
-            dt_index = TimeStepEq(Scalars, Diff, index);
+            dt_index = TimeStepEq(Scalars, index);
             if (dt_index < dt_ref){
                 dt_ref = dt_index;
                 (*dt) = dt_ref;
