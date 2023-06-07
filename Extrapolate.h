@@ -4,5 +4,6 @@
 
 extern void ComputeMidTimeStep(float dt, ScalarArrays *PrimeScalars, ScalarArrays *Scalars, Gradient *dDens, Gradient *dVx, Gradient *dVy, Gradient *dPres);
 extern void ComputeMidSpaceStep(MidSpaceStepArrays *MidSpaceArr, float A[], Gradient *dA);
+extern void ComputeMidSpaceStepForEnergy(MidSpaceStepArrays *MidSpaceE, MidSpaceStepArrays *MidSpacePres, MidSpaceStepArrays *MidSpaceDens, MidSpaceStepArrays *MidSpaceVx, MidSpaceStepArrays *MidSpaceVy);
 
 #endif
