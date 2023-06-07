@@ -7,10 +7,11 @@
 #include "MathOps.h"
 #include "Extrapolate.h"
 #include "Fluxes.h"
+#include "Diffusion.h"
 
 int main(){
     float t = 0;
-    float MinDiff, dt;
+    float dt, C_2, AveYKinetic;
 
     /* Primitives and Conservative arrays*/
     ScalarArrays Scalars;
@@ -31,6 +32,9 @@ int main(){
     /* MidStep derivatives in space for Energy*/
     MidSpaceStepArrays MidEne;
 
+    /* Maximum signal speed array */
+    MaxSignalSpeed MaxSigV;
+
     /* Fluxes arrays */
     FluxesArrays Fluxes;
     
@@ -41,21 +45,13 @@ int main(){
     */
     SetRandomInitialConditions(&Scalars);
 
-    /* Find min difference between dx and dy*/
-    if (dy > dx){
-        MinDiff = dx;
-    }
-    else{
-        MinDiff = dy;
-    }
-
     /* Fill conservative arrays with their values dependent of Scalar arrays */
     ObtainConservativeValues(&Conservatives, &Scalars);
 
     /* Start running simulation until FinalT is reached */
     while (t < FinalT){
         /* Find optimal timestep to mantain stability in the simulation */
-        GetOptimalTimeStep(&dt, &Scalars, MinDiff);
+        GetOptimalTimeStep(&dt, &Scalars);
 
         /* Obtain gradients for each primitive */
         ObtainGradient(&dDens, Scalars.Dens);
@@ -75,12 +71,24 @@ int main(){
 
         /* Compute fluxes for Density, Momentum and Energy */
         ComputeFluxes(&Fluxes, &MidDens, &MidPres, &MidVx, &MidVy, &MidEne);
-        
-        t += dt;
 
+        /* Obtain optimal diffusion coefficient */
+        GetOptimalDiffusiveTerm(&MaxSigV, &MidDens, &MidPres, &MidVx, &MidVy);
+
+        /* Add diffusive terms */
+        AddDiffusiveTerms(&Fluxes, &MaxSigV, &MidDens, &MidEne, &MidVx, &MidVy);
+
+        /* Apply fluxes to conservative terms*/
+        AddFluxesToConservatives(dt, &Conservatives, &Fluxes);
+        
         /* Compute Primitive values from Conservative values */
         ObtainScalarValues(&Scalars, &Conservatives);
-        printf("At t=%.3f with dt=%.3e\n", t, dt);   
+
+        /* Compute average kinetic energy over Y coordinate */
+        AveYKinetic = AverageKineticEnergy_Y_OverDomain(&Scalars);
+        printf("At t=%.3f with dt=%.3e with K.E. of Vy=%.3e\n", t, dt, AveYKinetic);
+
+        t += dt;
     }
     return 0;
-}
+}   
