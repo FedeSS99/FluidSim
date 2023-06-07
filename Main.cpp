@@ -6,6 +6,7 @@
 #include "TimeStep.h"
 #include "MathOps.h"
 #include "Extrapolate.h"
+#include "Fluxes.h"
 
 int main(){
     float t = 0;
@@ -27,6 +28,12 @@ int main(){
     MidSpaceStepArrays MidVx;
     MidSpaceStepArrays MidVy;
     MidSpaceStepArrays MidPres;
+    /* MidStep derivatives in space for Energy*/
+    MidSpaceStepArrays MidEne;
+
+    /* Fluxes arrays */
+    FluxesArrays Fluxes;
+    
 
     /*
     Setting initial random conditions as seen in:
@@ -42,12 +49,11 @@ int main(){
         MinDiff = dy;
     }
 
+    /* Fill conservative arrays with their values dependent of Scalar arrays */
+    ObtainConservativeValues(&Conservatives, &Scalars);
+
     /* Start running simulation until FinalT is reached */
     while (t < FinalT){
-
-        /* Fill conservative arrays with their values dependent of Scalar arrays */
-        ObtainConservativeValues(&Conservatives, &Scalars);
-
         /* Find optimal timestep to mantain stability in the simulation */
         GetOptimalTimeStep(&dt, &Scalars, MinDiff);
 
@@ -65,8 +71,15 @@ int main(){
         ComputeMidSpaceStep(&MidVx, PrimeScalars.Vx, &dVx);
         ComputeMidSpaceStep(&MidVy, PrimeScalars.Vy, &dVy);
         ComputeMidSpaceStep(&MidPres, PrimeScalars.Pres, &dPres);
+        ComputeMidSpaceStepForEnergy(&MidEne, &MidDens, &MidPres, &MidVx, &MidVy);
 
+        /* Compute fluxes for Density, Momentum and Energy */
+        ComputeFluxes(&Fluxes, &MidDens, &MidPres, &MidVx, &MidVy, &MidEne);
+        
         t += dt;
+
+        /* Compute Primitive values from Conservative values */
+        ObtainScalarValues(&Scalars, &Conservatives);
         printf("At t=%.3f with dt=%.3e\n", t, dt);   
     }
     return 0;
