@@ -2,6 +2,6 @@
 #define MATH_OPS_H
 #include "Arrays.h"
 
-extern Gradient ObtainGradient(float A[]);
+extern void ObtainGradient(Gradient *DA, float A[]);
 
 #endif

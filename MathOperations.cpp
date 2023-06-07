@@ -2,8 +2,7 @@
 #include "Arrays.h"
 #include "Index.h"
 
-Gradient ObtainGradient(float A[]){
-    Gradient DA;
+void ObtainGradient(Gradient *DA, float A[]){
     int i,j, index_c, index_L, index_R, index_B, index_U;
     int i_upper,j_upper, i_lower,j_lower;
     float InvDx = 0.5/dx;
@@ -28,10 +27,8 @@ Gradient ObtainGradient(float A[]){
             index_R = GetIndex(j_upper, i, Nx);
 
             index_c = GetIndex(j, i, Nx);
-            DA.A_DX[index_c] = (A[index_R] - A[index_L])*InvDx;
-            DA.A_DY[index_c] = (A[index_U] - A[index_B])*InvDy;
+            DA->DX[index_c] = (A[index_R] - A[index_L])*InvDx;
+            DA->DY[index_c] = (A[index_U] - A[index_B])*InvDy;
         }
     }
-
-    return DA;
 }
