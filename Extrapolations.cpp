@@ -65,8 +65,6 @@ void ComputeMidSpaceStep(MidSpaceStepArrays *MidSpaceArr, float A[], Gradient *d
 
 void ComputeMidSpaceStepForEnergy(MidSpaceStepArrays *MidSpaceE, MidSpaceStepArrays *MidSpacePres, MidSpaceStepArrays *MidSpaceDens, MidSpaceStepArrays *MidSpaceVx, MidSpaceStepArrays *MidSpaceVy){
     int i,j,index;
-    float half_stepX = 0.5*dx;
-    float half_stepY = 0.5*dy;
     float gas_c_1 = gas_c - 1.0;
     float E_XL, E_XR, E_YB, E_YT;
 
@@ -74,16 +72,11 @@ void ComputeMidSpaceStepForEnergy(MidSpaceStepArrays *MidSpaceE, MidSpaceStepArr
         for (j=0; j<Nx; j++){
             index = GetIndex(j, i, Nx);
 
-            E_XL = MidSpacePres->XL[index]/gas_c_1 + 0.5*MidSpaceDens->XL[index]*(powf(MidSpaceVx->XL[index], 2.0) + powf(MidSpaceVy->XL[index], 2.0));
-            E_XR = MidSpacePres->XR[index]/gas_c_1 + 0.5*MidSpaceDens->XR[index]*(powf(MidSpaceVx->XR[index], 2.0) + powf(MidSpaceVy->XR[index], 2.0));
-            E_YB = MidSpacePres->YB[index]/gas_c_1 + 0.5*MidSpaceDens->YB[index]*(powf(MidSpaceVx->YB[index], 2.0) + powf(MidSpaceVy->YB[index], 2.0));
-            E_YT = MidSpacePres->YT[index]/gas_c_1 + 0.5*MidSpaceDens->YT[index]*(powf(MidSpaceVx->YT[index], 2.0) + powf(MidSpaceVy->YT[index], 2.0));
+            MidSpaceE->XL[index] = (MidSpacePres->XL[index]/gas_c_1) + 0.5*MidSpaceDens->XL[index]*(powf(MidSpaceVx->XL[index], 2.0) + powf(MidSpaceVy->XL[index], 2.0));
+            MidSpaceE->XR[index] = (MidSpacePres->XR[index]/gas_c_1) + 0.5*MidSpaceDens->XR[index]*(powf(MidSpaceVx->XR[index], 2.0) + powf(MidSpaceVy->XR[index], 2.0));
 
-            MidSpaceE->XL[index] = E_XL;
-            MidSpaceE->XR[index] = E_XR;
-
-            MidSpaceE->YB[index] = E_YB;
-            MidSpaceE->YT[index] = E_YT;
+            MidSpaceE->YB[index] = (MidSpacePres->YB[index]/gas_c_1) + 0.5*MidSpaceDens->YB[index]*(powf(MidSpaceVx->YB[index], 2.0) + powf(MidSpaceVy->YB[index], 2.0));
+            MidSpaceE->YT[index] = (MidSpacePres->YT[index]/gas_c_1) + 0.5*MidSpaceDens->YT[index]*(powf(MidSpaceVx->YT[index], 2.0) + powf(MidSpaceVy->YT[index], 2.0));
         }
     }
 }
