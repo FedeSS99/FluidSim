@@ -11,7 +11,7 @@ void ObtainConservativeValues(ConservativeArrays *Conservatives, ScalarArrays *S
         for (j=0; j<Nx; j++){
             index = GetIndex(j, i, Nx);
 
-            mass = Scalars->Dens[index]/Volume;
+            mass = Scalars->Dens[index]*Volume;
             Conservatives->Mass[index] = mass;
 
             v_x = Scalars->Vx[index];
