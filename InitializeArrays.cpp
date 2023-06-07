@@ -4,11 +4,11 @@
 #include <math.h>
 #include <random>
 
-void SetRandomInitialConditions(int Ny, int Nx, float P0, float D1, float D2, float V1, float V2, ScalarArrays *Scalars){
+void SetRandomInitialConditions(ScalarArrays *Scalars){
     int i,j,index;  
     int Ny_bottom = Ny/4;
     int Ny_top = 3*(Ny/4);
-    float V1rand, V2rand;
+    float VxRand, VyRand;
 
     std::random_device RD;
     std::mt19937 gen(RD());
@@ -17,18 +17,18 @@ void SetRandomInitialConditions(int Ny, int Nx, float P0, float D1, float D2, fl
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){
             index = GetIndex(j, i, Nx);
-            V1rand = UniDis(gen);
-            V2rand = UniDis(gen);
+            VxRand = UniDis(gen);
+            VyRand = UniDis(gen);
 
             Scalars->Pres[index] = P0;
-            Scalars->Vy[index] = UniDis(gen);
+            Scalars->Vy[index] = VyRand;
 
             if ((Ny_bottom < i) && (i < Ny_top)){
-                Scalars->Vx[index] = V1;
+                Scalars->Vx[index] = V1 + VxRand;
                 Scalars->Dens[index] = D1;
             }
             else{
-                Scalars->Vx[index] = V2;
+                Scalars->Vx[index] = V2 + VxRand;
                 Scalars->Dens[index] = D2;
             }
         }
