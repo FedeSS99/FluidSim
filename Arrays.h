@@ -32,6 +32,17 @@ struct MidSpaceStepArrays{
     float YT[NyNx];
 };
 
+struct FluxesArrays{
+    float F_DensX[NyNx];
+    float F_DensY[NyNx];
+    float F_MomxX[NyNx];
+    float F_MomxY[NyNx];
+    float F_MomyX[NyNx];
+    float F_MomyY[NyNx];
+    float F_EneX[NyNx];
+    float F_EneY[NyNx];
+};
+
 extern void SetRandomInitialConditions(ScalarArrays *Scalars);
 
 #endif
