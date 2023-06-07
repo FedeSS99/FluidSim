@@ -5,11 +5,11 @@
 #include "ScalarsCons.h"
 #include "TimeStep.h"
 #include "MathOps.h"
+#include "Extrapolate.h"
 
 int main(){
     float t = 0;
     float MinDiff, dt;
-    int i,j;
 
     /* Primitives and Conservative arrays*/
     ScalarArrays Scalars;
@@ -22,11 +22,17 @@ int main(){
     Gradient dVy;
     Gradient dPres;
 
+    /* MidStep derivatives in space for each Primitive*/
+    MidSpaceStepArrays MidDens;
+    MidSpaceStepArrays MidVx;
+    MidSpaceStepArrays MidVy;
+    MidSpaceStepArrays MidPres;
+
     /*
     Setting initial random conditions as seen in:
     https://www.astro.princeton.edu/~jstone/Athena/tests/kh/kh.html
     */
-    SetRandomInitialConditions(Ny, Nx, P0, D1, D2, V1, V2, &Scalars);
+    SetRandomInitialConditions(&Scalars);
 
     /* Find min difference between dx and dy*/
     if (dy > dx){
@@ -46,19 +52,22 @@ int main(){
         GetOptimalTimeStep(&dt, &Scalars, MinDiff);
 
         /* Obtain gradients for each primitive */
-        dDens = ObtainGradient(Scalars.Dens);
-        dVx = ObtainGradient(Scalars.Vx);
-        dVy = ObtainGradient(Scalars.Vy);
-        dPres = ObtainGradient(Scalars.Pres);
+        ObtainGradient(&dDens, Scalars.Dens);
+        ObtainGradient(&dVx, Scalars.Vx);
+        ObtainGradient(&dVy, Scalars.Vy);
+        ObtainGradient(&dPres, Scalars.Pres);
 
         /* Extrapolate values to midsteps in time */
-        
+        ComputeMidTimeStep(dt, &PrimeScalars, &Scalars, &dDens, &dVx, &dVy, &dPres);
+
+        /* Extrapolate values to midsteps in space*/
+        ComputeMidSpaceStep(&MidDens, PrimeScalars.Dens, &dDens);
+        ComputeMidSpaceStep(&MidVx, PrimeScalars.Vx, &dVx);
+        ComputeMidSpaceStep(&MidVy, PrimeScalars.Vy, &dVy);
+        ComputeMidSpaceStep(&MidPres, PrimeScalars.Pres, &dPres);
 
         t += dt;
-        printf("At t=%.3f with dt=%.3e\n", t, dt);
-
-        
+        printf("At t=%.3f with dt=%.3e\n", t, dt);   
     }
-
     return 0;
 }
