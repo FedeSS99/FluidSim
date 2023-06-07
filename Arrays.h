@@ -21,10 +21,17 @@ struct ConservativeArrays{
 };
 
 struct Gradient{
-    float A_DX[NyNx];
-    float A_DY[NyNx];
+    float DX[NyNx];
+    float DY[NyNx];
 };
 
-extern void SetRandomInitialConditions(int Ny, int Nx, float P0, float D1, float D2, float V1, float V2, ScalarArrays *Scalars);
+struct MidSpaceStepArrays{
+    float XL[NyNx];
+    float XR[NyNx];
+    float YB[NyNx];
+    float YT[NyNx];
+};
+
+extern void SetRandomInitialConditions(ScalarArrays *Scalars);
 
 #endif
