@@ -20,11 +20,13 @@ struct ConservativeArrays{
     float E[NyNx];
 };
 
+/* Gradient arrays */
 struct Gradient{
     float DX[NyNx];
     float DY[NyNx];
 };
 
+/* Middle Space extrapolation arrays */
 struct MidSpaceStepArrays{
     float XL[NyNx];
     float XR[NyNx];
@@ -32,6 +34,7 @@ struct MidSpaceStepArrays{
     float YT[NyNx];
 };
 
+/* Flux of Density, Momentum and Energy */
 struct FluxesArrays{
     float F_DensX[NyNx];
     float F_DensY[NyNx];
@@ -41,6 +44,11 @@ struct FluxesArrays{
     float F_MomyY[NyNx];
     float F_EneX[NyNx];
     float F_EneY[NyNx];
+};
+
+/* Max signal speed array */
+struct MaxSignalSpeed{
+    float C2[NyNx];
 };
 
 extern void SetRandomInitialConditions(ScalarArrays *Scalars);
