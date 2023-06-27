@@ -2,55 +2,78 @@
 #define ARRAYS_H
 #include "Parameters.h"
 
+#include <stdlib.h>
+
 const int NyNx = Ny*Nx;
 
 /* Scalar arrays */
-struct ScalarArrays{
-    float Vx[NyNx];
-    float Vy[NyNx];
-    float Dens[NyNx];
-    float Pres[NyNx];
-};
+typedef struct ScalarArrays{
+    double *Vx = (double *)calloc(NyNx, sizeof(double));
+    double *Vy = (double *)calloc(NyNx, sizeof(double));
+    double *Dens = (double *)calloc(NyNx, sizeof(double));
+    double *Pres = (double *)calloc(NyNx, sizeof(double));
+} Primitives;
 
 /* Conservative arrays */
-struct ConservativeArrays{
-    float Mx[NyNx];
-    float My[NyNx];
-    float Mass[NyNx];
-    float E[NyNx];
-};
+typedef struct ConservativeArrays{
+    double *Mx = (double *)calloc(NyNx, sizeof(double));
+    double *My = (double *)calloc(NyNx, sizeof(double));
+    double *Mass = (double *)calloc(NyNx, sizeof(double));
+    double *E = (double *)calloc(NyNx, sizeof(double));
+} Conservatives;
 
 /* Gradient arrays */
-struct Gradient{
-    float DX[NyNx];
-    float DY[NyNx];
-};
+typedef struct Gradient{
+    double *DX = (double *)calloc(NyNx, sizeof(double));
+    double *DY = (double *)calloc(NyNx, sizeof(double));
+} Grad;
 
 /* Middle Space extrapolation arrays */
-struct MidSpaceStepArrays{
-    float XL[NyNx];
-    float XR[NyNx];
-    float YB[NyNx];
-    float YT[NyNx];
-};
+typedef struct MidSpaceStepArrays{
+    double *XL = (double *)calloc(NyNx, sizeof(double));
+    double *XR = (double *)calloc(NyNx, sizeof(double));
+    double *YB = (double *)calloc(NyNx, sizeof(double));
+    double *YT = (double *)calloc(NyNx, sizeof(double));
+} MidSpaceArr;
 
 /* Flux of Density, Momentum and Energy */
-struct FluxesArrays{
-    float F_DensX[NyNx];
-    float F_DensY[NyNx];
-    float F_MomxX[NyNx];
-    float F_MomxY[NyNx];
-    float F_MomyX[NyNx];
-    float F_MomyY[NyNx];
-    float F_EneX[NyNx];
-    float F_EneY[NyNx];
-};
+typedef struct FluxesArrays{
+    double *F_DensX = (double *)calloc(NyNx, sizeof(double));
+    double *F_DensY = (double *)calloc(NyNx, sizeof(double));
+    double *F_MomxX = (double *)calloc(NyNx, sizeof(double));
+    double *F_MomxY = (double *)calloc(NyNx, sizeof(double));
+    double *F_MomyX = (double *)calloc(NyNx, sizeof(double));
+    double *F_MomyY = (double *)calloc(NyNx, sizeof(double));
+    double *F_EneX = (double *)calloc(NyNx, sizeof(double));
+    double *F_EneY = (double *)calloc(NyNx, sizeof(double));
+} FluxArr;
 
 /* Max signal speed array */
-struct MaxSignalSpeed{
-    float C2[NyNx];
-};
+typedef struct MaxSignalSpeed{
+    double *C2 = (double *)calloc(NyNx, sizeof(double));
+} MaxSpeed;
+
+extern int GetIndex(int x, int y, int N);
+extern void GetPeriodicIndex(int *index, int N);
+
+extern void ObtainConservativeValues(ConservativeArrays *Conservatives, ScalarArrays *Scalars);
+extern void ObtainScalarValues(ScalarArrays *Scalars, ConservativeArrays *Conservatives);
+
+extern void ObtainGradient(Gradient *DA, double A[]);
+extern double AverageKineticEnergy_Y_OverDomain(ScalarArrays *Scalars);
 
 extern void SetRandomInitialConditions(ScalarArrays *Scalars);
+
+extern void ComputeMidTimeStep(double dt, ScalarArrays *PrimeScalars, ScalarArrays *Scalars, Gradient *dDens, Gradient *dVx, Gradient *dVy, Gradient *dPres);
+extern void ComputeMidSpaceStep(MidSpaceStepArrays *MidSpaceArr, double A[], Gradient *dA);
+extern void ComputeMidSpaceStepForEnergy(MidSpaceStepArrays *MidSpaceE, MidSpaceStepArrays *MidSpacePres, MidSpaceStepArrays *MidSpaceDens, MidSpaceStepArrays *MidSpaceVx, MidSpaceStepArrays *MidSpaceVy);
+
+extern void GetOptimalDiffusiveTerm(MaxSignalSpeed *MaxSigV, MidSpaceStepArrays *MidDens, MidSpaceStepArrays *MidPres, MidSpaceStepArrays *MidVx, MidSpaceStepArrays *MidVy);
+extern void AddDiffusiveTerms(FluxesArrays *Fluxes, MaxSignalSpeed *MaxSigV, MidSpaceStepArrays *MidDens, MidSpaceStepArrays *MidEne, MidSpaceStepArrays *MidVx, MidSpaceStepArrays *MidVy);
+
+extern void ComputeFluxes(FluxesArrays *Fluxes, MidSpaceStepArrays *MidDens, MidSpaceStepArrays *MidPres, MidSpaceStepArrays *MidVx, MidSpaceStepArrays *MidVy, MidSpaceStepArrays *MidEn);
+extern void AddFluxesToConservatives(double dt, ConservativeArrays *Cons, FluxesArrays *Fluxes);
+
+extern void GetOptimalTimeStep(double *dt, ScalarArrays *Scalars);
 
 #endif
