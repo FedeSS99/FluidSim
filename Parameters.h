@@ -10,24 +10,24 @@
     D_i, V_i: Density and horizontal velocities for each
     region (i=1,2)
 
-    gas_c : Constante de gas ideal
+    gas_c : Ideal gas constant
     */
-    const int Ny = 10;
-    const int Nx = 10;
+    const int Ny = 128;
+    const int Nx = 128;
 
-    const float Ly = 2.0;
-    const float Lx = 1.0;
+    const double Ly = 1.0;
+    const double Lx = 2.0;
 
-    const float dy = Ly/Ny;
-    const float dx = Lx/Nx;
-    const float Volume = dx*dy;
+    const double dy = Ly/Ny;
+    const double dx = Lx/Nx;
+    const double Volume = dx*dy;
 
-    const float FinalT = 5.0;
+    const double FinalT = 5.0;
 
-    const float P0 = 2.5;
-    const float D1 = 1.0;
-    const float D2 = 2.0;
-    const float V1 = 0.5;
-    const float V2 = -0.5;
-    const float gas_c = 1.4;
+    const double P0 = 2.5;
+    const double D1 = 1.0;
+    const double D2 = 2.0;
+    const double V1 = 0.5;
+    const double V2 = -0.5;
+    const double gas_c = 1.4;
 #endif
