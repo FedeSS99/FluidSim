@@ -1,12 +1,11 @@
 #include "Parameters.h"
 #include "Arrays.h"
-#include "Index.h"
 
-void ObtainGradient(Gradient *DA, float A[]){
+void ObtainGradient(Grad *DA, double A[]){
     int i,j, index_c, index_L, index_R, index_B, index_T;
     int i_upper,j_upper, i_lower,j_lower;
-    float InvDx = 0.5/dx;
-    float InvDy = 0.5/dy;
+    double InvDx = 0.5/dx;
+    double InvDy = 0.5/dy;
 
     for (i=0; i<Ny; i++){
         i_upper = i+1;

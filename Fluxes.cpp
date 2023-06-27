@@ -1,13 +1,12 @@
 #include "Parameters.h"
 #include "Arrays.h"
-#include "Index.h"
 #include <math.h> 
 
-void ComputeFluxes(FluxesArrays *Fluxes, MidSpaceStepArrays *MidDens, MidSpaceStepArrays *MidPres, MidSpaceStepArrays *MidVx, MidSpaceStepArrays *MidVy, MidSpaceStepArrays *MidEn){
+void ComputeFluxes(FluxArr *Fluxes, MidSpaceArr *MidDens, MidSpaceArr *MidPres, MidSpaceArr *MidVx, MidSpaceArr *MidVy, MidSpaceArr *MidEn){
     int i,j,index;
-    float DensX_Prom, DensY_Prom, MomxX_Prom, MomxY_Prom;
-    float MomyX_Prom, MomyY_Prom, EneX_Prom, EneY_Prom;
-    float PresX_Prom, PresY_Prom;
+    double DensX_Prom, DensY_Prom, MomxX_Prom, MomxY_Prom;
+    double MomyX_Prom, MomyY_Prom, EneX_Prom, EneY_Prom;
+    double PresX_Prom, PresY_Prom;
     
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){
@@ -22,26 +21,26 @@ void ComputeFluxes(FluxesArrays *Fluxes, MidSpaceStepArrays *MidDens, MidSpaceSt
             EneX_Prom = 0.5*(MidEn->XL[index] + MidEn->XR[index]);
             EneY_Prom = 0.5*(MidEn->YB[index] + MidEn->YT[index]);
 
-            PresX_Prom = (gas_c-1)*(EneX_Prom-0.5 * (powf(MomxX_Prom, 2.0) + powf(MomyX_Prom, 2.0)/DensX_Prom));
-            PresY_Prom = (gas_c-1)*(EneY_Prom-0.5 * (powf(MomxY_Prom, 2.0) + powf(MomyY_Prom, 2.0)/DensY_Prom));
+            PresX_Prom = (gas_c-1)*(EneX_Prom-0.5 * (pow(MomxX_Prom, 2.0) + pow(MomyX_Prom, 2.0)/DensX_Prom));
+            PresY_Prom = (gas_c-1)*(EneY_Prom-0.5 * (pow(MomxY_Prom, 2.0) + pow(MomyY_Prom, 2.0)/DensY_Prom));
 
             Fluxes->F_DensX[index] = MomxX_Prom;
             Fluxes->F_DensY[index] = MomxY_Prom;
-            Fluxes->F_MomxX[index] = powf(MomxX_Prom, 2.0)/DensX_Prom + PresX_Prom;
+            Fluxes->F_MomxX[index] = pow(MomxX_Prom, 2.0)/DensX_Prom + PresX_Prom;
             Fluxes->F_MomxY[index] = MomyY_Prom * MomxY_Prom/DensY_Prom;
             Fluxes->F_MomyX[index] = MomxX_Prom * MomyX_Prom/DensX_Prom;
-            Fluxes->F_MomyY[index] = powf(MomyY_Prom, 2.0)/DensY_Prom + PresY_Prom;
+            Fluxes->F_MomyY[index] = pow(MomyY_Prom, 2.0)/DensY_Prom + PresY_Prom;
             Fluxes->F_EneX[index] = (EneX_Prom+PresX_Prom) * MomxX_Prom/DensX_Prom;
             Fluxes->F_EneY[index] = (EneY_Prom+PresY_Prom) * MomyY_Prom/DensY_Prom;
         }
     }
 }
 
-void AddFluxesToConservatives(float dt, ConservativeArrays *Cons, FluxesArrays *Fluxes){
+void AddFluxesToConservatives(double dt, Conservatives *Cons, FluxArr *Fluxes){
     int i,j,index;
     int i_lower, j_lower, transX_index, transY_index;
-    float dtdx = dt*dx;
-    float dtdy = dt*dy;
+    double dtdx = dt*dx;
+    double dtdy = dt*dy;
 
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){

@@ -1,16 +1,15 @@
 #include "Parameters.h"
 #include "Arrays.h"
-#include "Index.h"
 #include <math.h>
 
-float DiffusiveTerm(float Dens, float Pres, float V){
-    return sqrtf(gas_c * Pres / Dens) + fabsf(V);
+double DiffusiveTerm(double Dens, double Pres, double V){
+    return sqrt(gas_c * Pres / Dens) + fabs(V);
 }
 
-void GetOptimalDiffusiveTerm(MaxSignalSpeed *MaxSigV, MidSpaceStepArrays *MidDens, MidSpaceStepArrays *MidPres, MidSpaceStepArrays *MidVx, MidSpaceStepArrays *MidVy){
-    float C_2;
+void GetOptimalDiffusiveTerm(MaxSpeed *MaxSigV, MidSpaceArr *MidDens, MidSpaceArr *MidPres, MidSpaceArr *MidVx, MidSpaceArr *MidVy){
+    double C_2;
     int i,j,k,index;
-    float C_terms[4] = {0.0, 0.0, 0.0, 0.0};
+    double C_terms[4] = {0.0, 0.0, 0.0, 0.0};
 
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){
@@ -32,9 +31,9 @@ void GetOptimalDiffusiveTerm(MaxSignalSpeed *MaxSigV, MidSpaceStepArrays *MidDen
     }
 }
 
-void AddDiffusiveTerms(FluxesArrays *Fluxes, MaxSignalSpeed *MaxSigV, MidSpaceStepArrays *MidDens, MidSpaceStepArrays *MidEne, MidSpaceStepArrays *MidVx, MidSpaceStepArrays *MidVy){
+void AddDiffusiveTerms(FluxArr *Fluxes, MaxSpeed *MaxSigV, MidSpaceArr *MidDens, MidSpaceArr *MidEne, MidSpaceArr *MidVx, MidSpaceArr *MidVy){
     int i,j,index;
-    float C_2;
+    double C_2;
 
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){

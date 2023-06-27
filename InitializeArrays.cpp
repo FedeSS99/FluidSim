@@ -1,14 +1,12 @@
 #include "Parameters.h"
 #include "Arrays.h"
-#include "Index.h"
-#include <math.h>
 #include <random>
 
-void SetRandomInitialConditions(ScalarArrays *Scalars){
+void SetRandomInitialConditions(Primitives *Scalars){
     int i,j,index;  
     int Ny_bottom = Ny/4;
     int Ny_top = 3*(Ny/4);
-    float VxRand, VyRand;
+    double VxRand, VyRand;
 
     std::random_device RD;
     std::mt19937 gen(RD());

@@ -1,26 +1,29 @@
 #include "Parameters.h"
 #include "Arrays.h"
-#include "Index.h"
 #include <math.h>
 
-float TimeStepEq(ScalarArrays *Scalars, int index){
-    float Pres_ind = Scalars->Pres[index];
-    float Dens_ind = Scalars->Dens[index];
-    float Vx_ind = Scalars->Vx[index];
-    float Vy_ind = Scalars->Vy[index];
+double TimeStepEq(Primitives *Scalars, int index){
+    double Pres_ind = Scalars->Pres[index];
+    double Dens_ind = Scalars->Dens[index];
+    double Vx2_ind = pow(Scalars->Vx[index], 2.0);
+    double Vy2_ind = pow(Scalars->Vy[index], 2.0);
 
-    float dt_x = 0.5*(dx/( sqrtf(gas_c*Pres_ind/Dens_ind) + fabs(Vx_ind)));
-    float dt_y = 0.5*(dy/( sqrtf(gas_c*Pres_ind/Dens_ind) + fabs(Vx_ind)));
+    double Vgas = sqrt(gas_c*Pres_ind/Dens_ind);
+    double Vmag = sqrt(Vx2_ind + Vy2_ind);
+    double Vtotal = Vgas + Vmag;
 
-    float minDT = (dt_x < dt_y) ? dt_x : dt_y;
+    double dt_x = 0.5*dx/Vtotal;
+    double dt_y = 0.5*dy/Vtotal;
+
+    double minDT = (dt_x < dt_y) ? dt_x : dt_y;
 
     return minDT;
 }
 
-void GetOptimalTimeStep(float *dt, ScalarArrays *Scalars){
+void GetOptimalTimeStep(double *dt, Primitives *Scalars){
     int i,j, index;
-    float dt_ref = TimeStepEq(Scalars, 0);
-    float dt_index;
+    double dt_ref = TimeStepEq(Scalars, 0);
+    double dt_index;
     
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){

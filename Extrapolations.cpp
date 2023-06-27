@@ -1,14 +1,13 @@
 #include "Parameters.h"
 #include "Arrays.h"
-#include "Index.h"
 #include <math.h> 
 
-void ComputeMidTimeStep(float dt, ScalarArrays *PrimeScalars, ScalarArrays *Scalars, Gradient *dDens, Gradient *dVx, Gradient *dVy, Gradient *dPres){
+void ComputeMidTimeStep(double dt, Primitives *PrimeScalars, Primitives *Scalars, Grad *dDens, Gradient *dVx, Grad *dVy, Grad *dPres){
     int i,j, index;
-    float half_dt = 0.5*dt;
-    float Dens_ind, Vx_ind, Vy_ind, Pres_ind;
-    float DensX_ind, VxX_ind, VyX_ind, PresX_ind;
-    float DensY_ind, VxY_ind, VyY_ind, PresY_ind;
+    double half_dt = 0.5*dt;
+    double Dens_ind, Vx_ind, Vy_ind, Pres_ind;
+    double DensX_ind, VxX_ind, VyX_ind, PresX_ind;
+    double DensY_ind, VxY_ind, VyY_ind, PresY_ind;
 
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){
@@ -36,11 +35,11 @@ void ComputeMidTimeStep(float dt, ScalarArrays *PrimeScalars, ScalarArrays *Scal
     }
 }
 
-void ComputeMidSpaceStep(MidSpaceStepArrays *MidSpaceArr, float A[], Gradient *dA){
+void ComputeMidSpaceStep(MidSpaceArr *MidSpaceArr, double A[], Grad *dA){
     int i,j,index,j_upper,i_upper;
     int transX_index,transY_index;
-    float half_stepX = 0.5*dx;
-    float half_stepY = 0.5*dy;
+    double half_stepX = 0.5*dx;
+    double half_stepY = 0.5*dy;
 
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){
@@ -63,20 +62,20 @@ void ComputeMidSpaceStep(MidSpaceStepArrays *MidSpaceArr, float A[], Gradient *d
     }
 }
 
-void ComputeMidSpaceStepForEnergy(MidSpaceStepArrays *MidSpaceE, MidSpaceStepArrays *MidSpacePres, MidSpaceStepArrays *MidSpaceDens, MidSpaceStepArrays *MidSpaceVx, MidSpaceStepArrays *MidSpaceVy){
+void ComputeMidSpaceStepForEnergy(MidSpaceArr *MidSpaceE, MidSpaceArr *MidSpacePres, MidSpaceArr *MidSpaceDens, MidSpaceArr *MidSpaceVx, MidSpaceArr *MidSpaceVy){
     int i,j,index;
-    float gas_c_1 = gas_c - 1.0;
-    float E_XL, E_XR, E_YB, E_YT;
+    double gas_c_1 = gas_c - 1.0;
+    double E_XL, E_XR, E_YB, E_YT;
 
     for (i=0; i<Ny; i++){
         for (j=0; j<Nx; j++){
             index = GetIndex(j, i, Nx);
 
-            MidSpaceE->XL[index] = (MidSpacePres->XL[index]/gas_c_1) + 0.5*MidSpaceDens->XL[index]*(powf(MidSpaceVx->XL[index], 2.0) + powf(MidSpaceVy->XL[index], 2.0));
-            MidSpaceE->XR[index] = (MidSpacePres->XR[index]/gas_c_1) + 0.5*MidSpaceDens->XR[index]*(powf(MidSpaceVx->XR[index], 2.0) + powf(MidSpaceVy->XR[index], 2.0));
+            MidSpaceE->XL[index] = (MidSpacePres->XL[index]/gas_c_1) + 0.5*MidSpaceDens->XL[index]*(pow(MidSpaceVx->XL[index], 2.0) + pow(MidSpaceVy->XL[index], 2.0));
+            MidSpaceE->XR[index] = (MidSpacePres->XR[index]/gas_c_1) + 0.5*MidSpaceDens->XR[index]*(pow(MidSpaceVx->XR[index], 2.0) + pow(MidSpaceVy->XR[index], 2.0));
 
-            MidSpaceE->YB[index] = (MidSpacePres->YB[index]/gas_c_1) + 0.5*MidSpaceDens->YB[index]*(powf(MidSpaceVx->YB[index], 2.0) + powf(MidSpaceVy->YB[index], 2.0));
-            MidSpaceE->YT[index] = (MidSpacePres->YT[index]/gas_c_1) + 0.5*MidSpaceDens->YT[index]*(powf(MidSpaceVx->YT[index], 2.0) + powf(MidSpaceVy->YT[index], 2.0));
+            MidSpaceE->YB[index] = (MidSpacePres->YB[index]/gas_c_1) + 0.5*MidSpaceDens->YB[index]*(pow(MidSpaceVx->YB[index], 2.0) + pow(MidSpaceVy->YB[index], 2.0));
+            MidSpaceE->YT[index] = (MidSpacePres->YT[index]/gas_c_1) + 0.5*MidSpaceDens->YT[index]*(pow(MidSpaceVx->YT[index], 2.0) + pow(MidSpaceVy->YT[index], 2.0));
         }
     }
 }
