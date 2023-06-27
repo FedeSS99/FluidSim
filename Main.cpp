@@ -1,43 +1,36 @@
 /*MAIN FLUID SIMULATOR BY USING FLUX METHOD*/
-#include <stdio.h>
-#include "Parameters.h"
 #include "Arrays.h"
-#include "ScalarsCons.h"
-#include "TimeStep.h"
-#include "MathOps.h"
-#include "Extrapolate.h"
-#include "Fluxes.h"
-#include "Diffusion.h"
+#include <stdio.h>
 
 int main(){
-    float t = 0;
-    float dt, C_2, AveYKinetic;
+    double t = 0;
+    double dt, C_2, AveYKinetic;
 
     /* Primitives and Conservative arrays*/
-    ScalarArrays Scalars;
-    ScalarArrays PrimeScalars;
-    ConservativeArrays Conservatives;
+    Primitives Scalars;
+    Primitives PrimeScalars;
+    Conservatives Conservatives;
 
     /* Gradients for each Primitive*/
-    Gradient dDens;
-    Gradient dVx;
-    Gradient dVy;
-    Gradient dPres;
+    Grad dDens;
+    Grad dVx;
+    Grad dVy;
+    Grad dPres;
 
     /* MidStep derivatives in space for each Primitive*/
-    MidSpaceStepArrays MidDens;
-    MidSpaceStepArrays MidVx;
-    MidSpaceStepArrays MidVy;
-    MidSpaceStepArrays MidPres;
+    MidSpaceArr MidDens;
+    MidSpaceArr MidVx;
+    MidSpaceArr MidVy;
+    MidSpaceArr MidPres;
     /* MidStep derivatives in space for Energy*/
-    MidSpaceStepArrays MidEne;
+    MidSpaceArr MidEne;
 
     /* Maximum signal speed array */
-    MaxSignalSpeed MaxSigV;
+    MaxSpeed MaxV;
 
     /* Fluxes arrays */
-    FluxesArrays Fluxes;
-    
+    FluxArr Fluxes;
+
 
     /*
     Setting initial random conditions as seen in:
@@ -73,10 +66,10 @@ int main(){
         ComputeFluxes(&Fluxes, &MidDens, &MidPres, &MidVx, &MidVy, &MidEne);
 
         /* Obtain optimal diffusion coefficient */
-        GetOptimalDiffusiveTerm(&MaxSigV, &MidDens, &MidPres, &MidVx, &MidVy);
+        GetOptimalDiffusiveTerm(&MaxV, &MidDens, &MidPres, &MidVx, &MidVy);
 
         /* Add diffusive terms */
-        AddDiffusiveTerms(&Fluxes, &MaxSigV, &MidDens, &MidEne, &MidVx, &MidVy);
+        AddDiffusiveTerms(&Fluxes, &MaxV, &MidDens, &MidEne, &MidVx, &MidVy);
 
         /* Apply fluxes to conservative terms*/
         AddFluxesToConservatives(dt, &Conservatives, &Fluxes);
@@ -90,5 +83,64 @@ int main(){
 
         t += dt;
     }
+
+    /*Free memory after simulation has finished*/
+    free(Scalars.Dens);
+    free(Scalars.Pres);
+    free(Scalars.Vx);
+    free(Scalars.Vy);
+
+    free(PrimeScalars.Dens);
+    free(PrimeScalars.Pres);
+    free(PrimeScalars.Vx);
+    free(PrimeScalars.Vy);
+
+    free(Conservatives.E);
+    free(Conservatives.Mass);
+    free(Conservatives.Mx);
+    free(Conservatives.My);
+
+    free(dDens.DX);
+    free(dDens.DY);
+    free(dVx.DX);
+    free(dVx.DY);
+    free(dVy.DX);
+    free(dVy.DY);
+    free(dPres.DX);
+    free(dPres.DY);
+
+    free(MidDens.XL);
+    free(MidDens.XR);
+    free(MidDens.YB);
+    free(MidDens.YT);
+    free(MidVx.XL);
+    free(MidVx.XR);
+    free(MidVx.YB);
+    free(MidVx.YT);
+    free(MidVy.XL);
+    free(MidVy.XR);
+    free(MidVy.YB);
+    free(MidVy.YT);
+    free(MidPres.XL);
+    free(MidPres.XR);
+    free(MidPres.YB);
+    free(MidPres.YT);
+    free(MidEne.XL);
+    free(MidEne.XR);
+    free(MidEne.YB);
+    free(MidEne.YT);
+
+    free(MaxV.C2);
+
+    /* Fluxes arrays */
+    free(Fluxes.F_DensX);    
+    free(Fluxes.F_DensY);    
+    free(Fluxes.F_MomxX);    
+    free(Fluxes.F_MomxY);    
+    free(Fluxes.F_MomyX);    
+    free(Fluxes.F_MomyY);    
+    free(Fluxes.F_EneX);    
+    free(Fluxes.F_EneY);    
+
     return 0;
 }   
